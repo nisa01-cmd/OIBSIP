@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import Toplevel, Button
 from tkinter import messagebox
 import sqlite3
-import emoji
+
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -29,7 +29,7 @@ class ChatApp:
         self.build_login_frame()
 
     def build_login_frame(self):
-        self.login_frame.pack()
+        self.login_frame.pack(padx=20, pady=20)
         tk.Label(self.login_frame, text="Username").pack()
         self.username_entry = tk.Entry(self.login_frame)
         self.username_entry.pack()
@@ -69,36 +69,48 @@ class ChatApp:
                 client.send(uname.encode())
                 self.login_frame.pack_forget()
                 self.build_chat_frame()
-                threading.Thread(target=self.receive_msg).start()
+                threading.Thread(target=self.receive_msg, daemon=True).start()
         else:
             messagebox.showerror("Error", "Invalid Credentials")
 
     def build_chat_frame(self):
         self.chat_frame.pack()
 
-        self.text_area = tk.Text(self.chat_frame, height=20, width=50)
-        self.text_area.pack()
+        self.text_area = tk.Text(self.chat_frame, height=20, width=60, font=("Consolas", 12))
+        self.text_area.pack(pady=(0, 10))
         self.text_area.config(state=tk.DISABLED)
 
-        self.msg_entry = tk.Entry(self.chat_frame, width=40)
-        self.msg_entry.pack(side=tk.LEFT)
+        entry_frame = tk.Frame(self.chat_frame)
+        entry_frame.pack()
 
-        tk.Button(self.chat_frame, text="😊", command=self.open_emoji_picker).pack(side=tk.LEFT)   
+        self.msg_entry = tk.Entry(entry_frame, width=40, font=("Arial", 11))
+        self.msg_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+        tk.Button(self.chat_frame, text="😊", width=3, command=self.toggle_emoji_frame).pack(side=tk.LEFT)   
         tk.Button(self.chat_frame, text="Send", command=self.send_msg).pack(side=tk.LEFT)
+        
+        # Emoji Frame (hidden by default)
+        self.emoji_frame = tk.Frame(self.chat_frame)
+        self.emoji_frame.pack(pady=5)
+        self.emoji_frame.pack_forget()  # Hide initially
 
-    def open_emoji_picker(self):
-        emoji_window = Toplevel(self.root)
-        emoji_window.title("Choose Emoji")
-        emojis = ['😀', '😂', '😍', '😎', '😭', '😡', '👍', '👎', '🙏', '❤️']
+        self.populate_emojis()
 
+    def toggle_emoji_frame(self):
+        if self.emoji_frame.winfo_ismapped():
+            self.emoji_frame.pack_forget()
+        else:
+            self.emoji_frame.pack()
+
+    def populate_emojis(self):
+        emojis = ['😀', '😂', '😍', '😎', '😭', '😡', '👍', '👎', '🙏', '❤️', '💀', '😅']
         for emo in emojis:
-           btn = Button(emoji_window, text=emo, font=("Arial", 14), command=lambda e=emo: self.insert_emoji(e))
-           btn.pack(side=tk.LEFT)
+            btn = tk.Button(self.emoji_frame, text=emo, font=("Arial", 14),
+                            command=lambda e=emo: self.insert_emoji(e))
+            btn.pack(side=tk.LEFT, padx=2)
 
     def insert_emoji(self, emoji_char):
-        current_text = self.msg_entry.get()
-        self.msg_entry.delete(0, tk.END)
-        self.msg_entry.insert(0, current_text + emoji_char)
+        self.msg_entry.insert(tk.END, emoji_char)
 
 
     def send_msg(self):
@@ -108,6 +120,7 @@ class ChatApp:
            self.text_area.config(state=tk.NORMAL)
            self.text_area.insert(tk.END, f"You: {msg}\n")
            self.text_area.config(state=tk.DISABLED)
+           self.text_area.yview(tk.END)  # Auto-scroll
 
            # Send to server
            client.send(msg.encode())
@@ -120,6 +133,7 @@ class ChatApp:
                 self.text_area.config(state=tk.NORMAL)
                 self.text_area.insert(tk.END, msg + "\n")
                 self.text_area.config(state=tk.DISABLED)
+                self.text_area.yview(tk.END)  # Auto-scroll
             except:
                 break
 
