@@ -5,7 +5,6 @@ from tkinter import Toplevel, Button
 from tkinter import messagebox
 import sqlite3
 
-
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def connect_to_server():
