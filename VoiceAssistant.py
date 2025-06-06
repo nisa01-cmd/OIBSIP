@@ -73,7 +73,7 @@ def get_weather(city):
     except Exception as e:
         print("Weather error:", e)
         speak("Failed to fetch weather data.")
-
+...............
 def get_news():
     print("Fetching news...")
     url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={news_api_key}"
