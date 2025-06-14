@@ -4,8 +4,6 @@ import random
 import string
 import tkinter.messagebox as messagebox
 
-
-
 # Function to generate password
 def generate_password():
     try:

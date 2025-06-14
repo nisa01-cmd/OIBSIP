@@ -11,9 +11,9 @@ from transformers import pipeline
 import nltk
 
 # -------- API KEYS DIRECTLY IN CODE --------
-openai.api_key = "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"
-weather_api_key = "a02f9436567cc8facb143ead344f78c3"
-news_api_key = "b6e8a679830a4b529b7aaf8f218d17c5"
+openai.api_key = "api_key_here"  # --- Cannot upload due to security reasons ---
+weather_api_key = "api_key_here"  # --- Cannot upload due to security reasons ---
+news_api_key = "api_key_here"  # --- Cannot upload due to security reasons ---
 
 nltk.download('punkt')
 nlp_classifier = pipeline("text-classification", model="joeddav/distilbert-base-uncased-go-emotions-student")
