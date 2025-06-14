@@ -6,7 +6,7 @@ import io
 import time
 
 # --- API Key ---
-API_KEY = "a02f9436567cc8facb143ead344f78c3"  
+API_KEY = "api_key_here"  # --- Cannot upload due to security reasons ---
 
 # --- Initialize Main Window ---
 root = tk.Tk()
